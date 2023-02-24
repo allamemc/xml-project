@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tabla Clientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      body{
+        width: 1200px;
+        margin: 0 auto;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="p-4 p-md-5 mb-4 rounded text-bg-dark" style="background-image: url('https://img.freepik.com/vector-gratis/fondo-negro-degradado-lineas-onduladas_23-2149157312.jpg'); background-repeat: no-repeat;
+    background-size: cover;">
+      <div class="col-md-6 px-0">
+        <h1 class="display-5">AutoCasion Panel</h1>
+        <p class="lead my-3">Visualizador de XML profesional para la información de los clientes de la tienda.</p>
+      </div>
+    </div>
+
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="">Tabla Clientes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="./productos.html">Tabla Productos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="./todo.html">Tabla General</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="./buscador.html">Buscador de Pedidos</a>
+      </li>
+    </ul>
+    <table id="tablaClientes" class="table table-striped border" style="text-align: center;">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Teléfono</th>
+          <th>Dirección</th>
+          <th>Correo</th>
+          <th>Fecha de inclusión</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const tablaClientes = document.getElementById('tablaClientes').getElementsByTagName('tbody')[0];
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'clientes.xml', true);
+      xhr.responseType = 'document';
+
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const xml = xhr.responseXML;
+          const clientes = xml.getElementsByTagName('cliente');
+
+          for (let i = 0; i < clientes.length; i++) {
+            const cliente = clientes[i];
+            const nombreCliente = cliente.getElementsByTagName('nombre')[0].textContent;
+            const apellidosCliente = cliente.getElementsByTagName('apellidos')[0].textContent;
+            const telefonoCliente = cliente.getElementsByTagName('telefono')[0].textContent;
+            const calleCliente = cliente.getElementsByTagName('calle')[0].textContent;
+            const ciudadCliente = cliente.getElementsByTagName('ciudad')[0].textContent;
+            const codigoPostalCliente = cliente.getElementsByTagName('codigo_postal')[0].textContent;
+            const provinciaCliente = cliente.getElementsByTagName('provincia')[0].textContent;
+            const correoCliente = cliente.getElementsByTagName('correo')[0].textContent;
+            const fechaInclusionCliente = cliente.getElementsByTagName('fecha_inclusion')[0].textContent;
+
+            const fila = document.createElement('tr');
+
+            const celdaNombre = document.createElement('td');
+            celdaNombre.textContent = nombreCliente;
+            fila.appendChild(celdaNombre);
+
+            const celdaApellidos = document.createElement('td');
+            celdaApellidos.textContent = apellidosCliente;
+            fila.appendChild(celdaApellidos);
+
+            const celdaTelefono = document.createElement('td');
+            celdaTelefono.textContent = telefonoCliente;
+            fila.appendChild(celdaTelefono);
+
+            const celdaDireccion = document.createElement('td');
+            celdaDireccion.textContent = `${calleCliente}, ${ciudadCliente}, ${codigoPostalCliente}, ${provinciaCliente}`;
+            fila.appendChild(celdaDireccion);
+
+            const celdaCorreo = document.createElement('td');
+            celdaCorreo.textContent = correoCliente;
+            fila.appendChild(celdaCorreo);
+
+            const celdaFechaInclusion = document.createElement('td');
+            celdaFechaInclusion.textContent = fechaInclusionCliente;
+            fila.appendChild(celdaFechaInclusion);
+
+            tablaClientes.appendChild(fila);
+          }
+        }
+      };
+      xhr.send();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  </body>
+</html>

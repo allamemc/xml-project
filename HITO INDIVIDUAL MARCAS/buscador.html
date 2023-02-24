@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Búsqueda de pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        form{
+            margin: 0 auto;
+            width: 500px;
+        }
+        .factura{
+            text-align: center;
+        }
+        body{
+        width: 1200px;
+        margin: 0 auto;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="p-4 p-md-5 mb-4 rounded text-bg-dark" style="background-image: url('https://img.freepik.com/vector-gratis/fondo-negro-degradado-lineas-onduladas_23-2149157312.jpg'); background-repeat: no-repeat;
+    background-size: cover;">
+      <div class="col-md-6 px-0">
+        <h1 class="display-5">AutoCasion Panel</h1>
+        <p class="lead my-3">Visualizador de XML profesional para la información de los clientes de la tienda.</p>
+      </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" href="./clientes.html">Tabla Clientes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./productos.html">Tabla Productos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./todo.html">Tabla General</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="">Buscador de Pedidos</a>
+        </li>
+      </ul>
+    <h1 style="text-align: center; margin-top: 20px;">Buscador de Pedidos</h1>
+    <form>
+        <div class="form-group">
+          <input class="form-control" type="text" id="numPedido" name="numPedido" placeholder="Número del Pedido">
+          <small id="emailHelp" class="form-text text-muted">Introduzca bien el número del pedido que desea buscar.</small>
+        </div>
+        <button type="button" onclick="buscarPedido()" class="btn btn-primary">Buscar pedido</button>
+      </form>
+      <br>
+      <div id="factura" class="factura" style="margin-bottom: 20px;">
+
+      </div>
+          
+    <script>
+      function buscarPedido() {
+  var numPedido = document.getElementById("numPedido").value; // Obtener el número de pedido ingresado por el usuario
+  
+  var xhttp = new XMLHttpRequest(); // Crear una instancia de XMLHttpRequest
+  
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var xmlDoc = this.responseXML; // Obtener el archivo XML como un objeto XML
+      
+      var pedidos = xmlDoc.getElementsByTagName("pedido"); // Obtener todos los nodos "pedido" del archivo XML
+      
+      // Buscar el nodo del pedido correspondiente al número ingresado por el usuario
+      for (var i = 0; i < pedidos.length; i++) {
+        var numpedido = pedidos[i].getElementsByTagName("numpedido")[0].childNodes[0].nodeValue;
+        if (numpedido == numPedido) {
+          var cliente = pedidos[i].getElementsByTagName("cliente")[0];
+          var detalle_pedido = pedidos[i].getElementsByTagName("detalle_pedido")[0];
+          
+          // Crear la factura en formato HTML
+          var factura = "<h2>Factura " + numpedido + "</h2>";
+          factura += "<p>Nombre: " + cliente.getElementsByTagName("nombre")[0].childNodes[0].nodeValue + " " + cliente.getElementsByTagName("apellidos")[0].childNodes[0].nodeValue + "</p>";
+          factura += "<p>Teléfono: " + cliente.getElementsByTagName("telefono")[0].childNodes[0].nodeValue + "</p>";
+          factura += "<p>Dirección: " + cliente.getElementsByTagName("calle")[0].childNodes[0].nodeValue + ", " + cliente.getElementsByTagName("ciudad")[0].childNodes[0].nodeValue + ", " + cliente.getElementsByTagName("provincia")[0].childNodes[0].nodeValue + " " + cliente.getElementsByTagName("codigo_postal")[0].childNodes[0].nodeValue + "</p>";
+          factura += "<p>Fecha de compra: " + detalle_pedido.getElementsByTagName("fecha_compra")[0].childNodes[0].nodeValue + "</p>";
+          factura += "<p>Fecha de entrega: " + detalle_pedido.getElementsByTagName("fecha_entrega")[0].childNodes[0].nodeValue + "</p>";
+          factura += "<p>Total con IVA: " + detalle_pedido.getElementsByTagName("total_facturaiva")[0].childNodes[0].nodeValue + " €</p>";
+          
+          var productos = detalle_pedido.getElementsByTagName("producto");
+          factura += "<table style='margin:0 auto; width:500px;' class='table'><tr><th>Producto</th><th>Referencia</th><th>Precio unitario</th><th>Unidades</th></tr>";
+            for (var j = 0; j < productos.length; j++) {
+        factura += "<tr><td>" + productos[j].getElementsByTagName("nombre")[0].childNodes[0].nodeValue + "</td>";
+        factura += "<td>" + productos[j].getElementsByTagName("referencia")[0].childNodes[0].nodeValue + "</td>";
+        factura += "<td>" + productos[j].getElementsByTagName("precio")[0].childNodes[0].nodeValue + " €</td>";
+        factura += "<td>" + productos[j].getElementsByTagName("unidades")[0].childNodes[0].nodeValue + "</td></tr>";
+      }
+      factura += "</table>";
+      
+      // Insertar la factura en la página HTML
+      document.getElementById("factura").innerHTML = factura;
+      return;
+    }
+  }
+  
+  // Si no se encuentra el pedido, mostrar un mensaje de error
+  document.getElementById("factura").innerHTML = "No se ha encontrado ningún pedido con el número " + numPedido;
+}
+};
+
+xhttp.open("GET", "clientes.xml", true); // Especificar el archivo XML externo
+xhttp.send();
+}
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  </body>
+</html>
